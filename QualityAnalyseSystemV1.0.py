@@ -14592,7 +14592,17 @@ class ORTAnalyseSystem(QMainWindow):
             QMainWindow {{ background-color: #F0F7FF; }}
             QWidget#main_area {{ background-color: #F0F7FF; }}
             QWidget {{ background-color: transparent; }}
-            
+
+            /* 浮动提示样式 — 解决黑底、文字不清晰问题 */
+            QToolTip {{
+                background-color: #FFFFFF;
+                color: #2C3E50;
+                border: 1px solid #C5D9E8;
+                border-radius: 4px;
+                padding: {int(6*s)}px;
+                font-family: "Microsoft YaHei UI", sans-serif;
+            }}
+
             /* 消息对话框样式 — 防止黑底 */
             QMessageBox {{
                 background-color: #F5F9FF;
@@ -15839,11 +15849,15 @@ class ORTAnalyseSystem(QMainWindow):
 
     def _wi_cpk_row_label(self, grp: dict, *, show_process: bool = False) -> str:
         dim_desc = str(grp.get("dimension_description") or "").strip()
+        # 替换换行符，防止左侧尺寸列表项折行或重叠
+        dim_desc = dim_desc.replace("\r\n", " ").replace("\n", " ").replace("\r", " ")
         spec = str(grp.get("spec") or "").strip()
         if not spec:
             spec = self._wi_format_dimension_spec(
                 grp.get("nominal"), grp.get("tol_max"), grp.get("tol_min")
             )
+        else:
+            spec = spec.replace("\r\n", " ").replace("\n", " ").replace("\r", " ")
         parts = []
         if show_process and str(grp.get("wi_process") or "").strip():
             parts.append(str(grp.get("wi_process") or "").strip())
